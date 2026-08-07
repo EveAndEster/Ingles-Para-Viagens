@@ -111,7 +111,12 @@ async function handleSignUp() {
   const { data, error } = await supabaseClient.auth.signUp({ email, password });
 
   if (error) {
-    setAuthMessage(error.message, true);
+    const msg = (error.message || '').toLowerCase();
+    if (msg.includes('database error') || msg.includes('não autorizado')) {
+      setAuthMessage('Este e-mail não está autorizado a criar uma conta. Entre em contato com a professora para receber acesso.', true);
+    } else {
+      setAuthMessage(error.message, true);
+    }
     return;
   }
 
