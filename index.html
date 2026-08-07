@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inglês Para Viagens — O inglês como a sua chave da liberdade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/auth.js" defer></script>
+</head>
+<body>
+
+<!-- ============ LOGIN GATE ============ -->
+<!-- Shown until a student logs in. Hidden automatically once signed in. -->
+<div id="auth-gate" class="auth-gate">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <span class="mark">IPV</span>
+      <span class="name">Inglês <span>Para Viagens</span></span>
+    </div>
+
+    <div id="auth-signin">
+      <h2>Entrar</h2>
+      <p class="auth-sub">Acesse com o e-mail e senha da sua conta de aluno.</p>
+      <input type="email" id="signin-email" class="auth-input" placeholder="Seu e-mail" autocomplete="email">
+      <input type="password" id="signin-password" class="auth-input" placeholder="Sua senha" autocomplete="current-password">
+      <button class="auth-btn" onclick="handleSignIn()">Entrar</button>
+      <p class="auth-toggle">Ainda não tem conta? <a href="#" onclick="showSignUp();return false;">Criar conta</a></p>
+    </div>
+
+    <div id="auth-signup" style="display:none;">
+      <h2>Criar conta</h2>
+      <p class="auth-sub">Crie sua conta de aluno para começar a estudar.</p>
+      <input type="email" id="signup-email" class="auth-input" placeholder="Seu e-mail" autocomplete="email">
+      <input type="password" id="signup-password" class="auth-input" placeholder="Crie uma senha (mín. 6 caracteres)" autocomplete="new-password">
+      <button class="auth-btn" onclick="handleSignUp()">Criar conta</button>
+      <p class="auth-toggle">Já tem conta? <a href="#" onclick="showSignIn();return false;">Entrar</a></p>
+    </div>
+
+    <p id="auth-message" class="auth-message"></p>
+  </div>
+</div>
+
+<!-- ============ SITE CONTENT (hidden until logged in) ============ -->
+<div id="app-content" style="display:none;">
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <a class="brand" href="#" onclick="showTab('home');return false;">
+      <span class="mark">IPV</span>
+      <span class="name">Inglês <span>Para Viagens</span></span>
+    </a>
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="home" onclick="showTab('home')">Início</button>
+      <button class="tab-btn" data-tab="modulo1" onclick="showTab('modulo1')">Módulo 1 · Aula 1</button>
+      <button class="tab-btn" data-tab="metodologia" onclick="showTab('metodologia')">Metodologia</button>
+      <button class="tab-btn" data-tab="sobre" onclick="showTab('sobre')">Sobre</button>
+      <button class="tab-btn" data-tab="contato" onclick="showTab('contato')">Contato</button>
+    </nav>
+    <button class="nav-cta" style="background:transparent; color:var(--violet-deep); border:1px solid var(--violet);" onclick="handleSignOut()">Sair</button>
+  </div>
+</header>
+
+<!-- ============ HOME TAB ============ -->
+<div id="home" class="tab-panel active">
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow mono">Inglês Para Viagens</div>
+      <h1>O inglês é a chave da <em>sua liberdade.</em></h1>
+      <p class="sub">Uma plataforma feita para brasileiros iniciantes e intermediários que sempre quiseram falar inglês com confiança — para viajar, trabalhar e viver sem medo de errar.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="showTab('modulo1')">Começar com a Aula 1</button>
+        <button class="btn-ghost" onclick="document.getElementById('metodo').scrollIntoView({behavior:'smooth'})">Conhecer o método</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="wrap">
+    <div class="section-head"><span class="tag mono">Missão</span><h2>Por que o inglês muda tudo</h2></div>
+    <p class="section-intro">Não é sobre decorar regras de gramática. É sobre o que acontece quando você finalmente consegue se comunicar — em qualquer aeroporto, reunião ou conversa com um estranho no mundo todo.</p>
+    <div class="grid3">
+      <div class="pillar">
+        <div class="icon">✈️</div>
+        <h3>Liberdade</h3>
+        <p>O mundo inteiro se abre quando o idioma deixa de ser uma barreira. Você escolhe para onde ir, sem depender de ninguém para traduzir.</p>
+      </div>
+      <div class="pillar">
+        <div class="icon">💬</div>
+        <h3>Confiança</h3>
+        <p>Você não precisa ser perfeito para ser entendido. Aqui você aprende a falar de verdade, mesmo com sotaque, mesmo com medo no começo.</p>
+      </div>
+      <div class="pillar">
+        <div class="icon">🌍</div>
+        <h3>Oportunidade</h3>
+        <p>Um novo emprego, uma amizade internacional, uma vaga que exige inglês. O idioma que te limitava passa a abrir portas — pessoais e profissionais.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <section class="wrap" id="metodo">
+    <div class="section-head"><span class="tag mono">Método</span><h2>Como funciona</h2></div>
+    <p class="section-intro">Sem pressa, sem julgamento. Um caminho pensado para quem trava na hora de falar — não para quem já é fluente.</p>
+
+    <div class="ticket">
+      <div class="stub"><div class="num">1</div><div class="lbl mono">Base</div></div>
+      <div class="perf"></div>
+      <div class="body"><h3>Comece do zero, sem julgamento</h3><p>Aulas pensadas para quem sente vergonha ou trava na hora de falar — o ponto de partida é o seu, não o de um livro genérico.</p></div>
+    </div>
+    <div class="ticket">
+      <div class="stub"><div class="num">2</div><div class="lbl mono">Frases</div></div>
+      <div class="perf"></div>
+      <div class="body"><h3>Aprenda o que você vai realmente usar</h3><p>Nada de vocabulário inútil. Você aprende a se apresentar, contar sua história e se virar em situações reais de viagem e trabalho.</p></div>
+    </div>
+    <div class="ticket">
+      <div class="stub"><div class="num">3</div><div class="lbl mono">Voz</div></div>
+      <div class="perf"></div>
+      <div class="body"><h3>Pratique em voz alta, sem medo</h3><p>Cada aula tem espaço para você falar, errar e tentar de novo. Fluência se constrói praticando — não apenas lendo.</p></div>
+    </div>
+    <div class="ticket">
+      <div class="stub"><div class="num">4</div><div class="lbl mono">Mundo</div></div>
+      <div class="perf"></div>
+      <div class="body"><h3>Viaje, converse e sinta a liberdade</h3><p>O objetivo final não é o inglês perfeito. É a liberdade de ir a qualquer lugar do mundo e se sentir em casa.</p></div>
+    </div>
+  </section>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <section class="wrap">
+    <div class="section-head"><span class="tag mono">Jornada</span><h2>Nossos módulos</h2></div>
+    <p class="section-intro">Novos módulos e aulas chegando aos poucos. Comece pelo Módulo 1 — o resto do caminho vai se abrindo conforme você avança.</p>
+    <div class="grid-modules">
+      <div class="mod-card">
+        <div class="m-tag">MÓDULO 1 · AULA 1</div>
+        <h4>Apresente-se em inglês</h4>
+        <p>Pronomes, o verbo "to be" no presente e passado, e as perguntas que todo mundo faz quando você viaja: nome, idade, de onde você é.</p>
+        <button class="go" onclick="showTab('modulo1')">Começar →</button>
+      </div>
+      <div class="mod-card locked">
+        <div class="m-tag">MÓDULO 2</div>
+        <h4>No aeroporto e no hotel</h4>
+        <p>Check-in, imigração, achando sua conexão — as primeiras horas de qualquer viagem, em inglês.</p>
+        <span class="soon">Em breve</span>
+      </div>
+      <div class="mod-card locked">
+        <div class="m-tag">MÓDULO 3</div>
+        <h4>Pequenas conversas, grandes conexões</h4>
+        <p>Small talk com estranhos, colegas de trabalho e novos amigos pelo mundo.</p>
+        <span class="soon">Em breve</span>
+      </div>
+      <div class="mod-card locked">
+        <div class="m-tag">MÓDULO 4</div>
+        <h4>Comida, compras e o dia a dia</h4>
+        <p>Pedir num restaurante, negociar num mercado, resolver imprevistos sem travar.</p>
+        <span class="soon">Em breve</span>
+      </div>
+      <div class="mod-card locked">
+        <div class="m-tag">MÓDULO 5</div>
+        <h4>Inglês para o trabalho</h4>
+        <p>Reuniões, e-mails e entrevistas — o inglês que abre oportunidades profissionais.</p>
+        <span class="soon">Em breve</span>
+      </div>
+      <div class="mod-card locked">
+        <div class="m-tag">MÓDULO 6</div>
+        <h4>Fluência com confiança</h4>
+        <p>Conversas longas, opiniões, histórias — o inglês que já não é mais um obstáculo.</p>
+        <span class="soon">Em breve</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap-narrow">
+    <div class="quote-band" style="border-radius:20px;">
+      <div class="quote-mark">"</div>
+      <blockquote>Falar inglês não é sobre ser perfeito. É sobre ser livre.</blockquote>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top:0;">
+    <div class="cta-band">
+      <h2>Pronto para começar sua jornada?</h2>
+      <p>A primeira aula é gratuita — e o primeiro passo é o mais importante.</p>
+      <button class="btn-primary" onclick="showTab('modulo1')">Começar com a Aula 1</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ MÓDULO 1 TAB ============ -->
+<div id="modulo1" class="tab-panel">
+  <div class="m1-hero">
+    <div class="eyebrow mono" style="font-size:12px;letter-spacing:0.2em;opacity:0.85;margin-bottom:12px;">Inglês Para Viagens</div>
+    <h1>Módulo 1 · Aula 1</h1>
+    <p>Apresente-se em inglês — pronomes, o verbo "to be" e as primeiras perguntas de qualquer viagem.</p>
+    <div class="badge mono">Iniciante → Intermediário</div>
+  </div>
+
+<div class="wrap-narrow m1lesson">
+
+
+<div class="section-head"><span class="tag">Class 1</span><h2>Here's what you will learn in this class</h2></div>
+<ul class="plain">
+  <li>You will learn to ask someone to introduce themselves.</li>
+  <li>You will learn the correct way to introduce yourself when meeting someone new.</li>
+  <li>You will learn how to use the verb 'To Be' in the present tense and the past tense.</li>
+  <li>You will learn to use the verb 'To Be' to introduce yourself to other people.</li>
+  <li>You will learn to tell your name, nickname and your age.</li>
+  <li>Also you will learn to tell where you're from and where you live at the moment.</li>
+</ul>
+<p class="callout">I wish you good luck with your first class!</p>
+
+
+<div class="divider">&#10022; &#10022; &#10022;</div>
+<div class="section-head"><span class="tag">Warm-up</span><h2>Introduce yourself</h2></div>
+<div class="qcard">
+  <h3>Introduce yourself <button class="spk" onclick="document.getElementById('aud1').play()" aria-label="Play audio">🔊</button></h3>
+  <p class="pt">Apresente você mesmo</p>
+</div>
+<div class="qcard">
+  <h3>Tell me about yourself <button class="spk" onclick="document.getElementById('aud2').play()" aria-label="Play audio">🔊</button></h3>
+  <p class="pt">Me diz sobre você mesmo</p>
+</div>
+<div class="qcard">
+  <h3>What is your story? <button class="spk" onclick="document.getElementById('aud3').play()" aria-label="Play audio">🔊</button></h3>
+  <p class="pt">Qual é sua história?</p>
+</div>
+<div class="qcard">
+  <h3>Let me Introduce myself&hellip; <button class="spk" onclick="document.getElementById('aud4').play()" aria-label="Play audio">🔊</button></h3>
+  <p class="pt">Deixe me apresentar&hellip;</p>
+</div>
+
+
+<div class="section-head"><span class="tag">Grammar</span><h2>Pronouns <button class="spk" onclick="document.getElementById('aud5').play()" aria-label="Play audio">🔊</button></h2></div>
+<h3 class="pt">Pronomes</h3>
+<table class="deck">
+<tr><th>English</th><th>Português</th></tr>
+<tr><td>I</td><td>Eu</td></tr>
+<tr><td>You</td><td>Tu</td></tr>
+<tr><td>He/ She/ It</td><td>Ele/Ela</td></tr>
+<tr><td>We</td><td>Nos</td></tr>
+<tr><td>You</td><td>Voces</td></tr>
+<tr><td>They</td><td>Eles</td></tr>
+</table>
+
+
+<div class="section-head"><span class="tag">Grammar</span><h2>Verb To Be – The Present <button class="spk" onclick="document.getElementById('aud6').play()" aria-label="Play audio">🔊</button><button class="spk" onclick="document.getElementById('aud7').play()" aria-label="Play audio">🔊</button></h2></div>
+<h3 class="pt">Verbo Ser e Estar – O presente</h3>
+<table class="deck">
+<tr><th>To be</th><th>Ser/Estar</th></tr>
+<tr><td>I am = I'm</td><td>Eu sou/estou</td></tr>
+<tr><td>You are = you're</td><td>Tu es/estas</td></tr>
+<tr><td>He/ She/ It is = he's/she's/ It's</td><td>Ele/Ela e/esta</td></tr>
+<tr><td>We are = we're</td><td>Nos somos/estamos</td></tr>
+<tr><td>You are = you're</td><td>Voces sao/estao</td></tr>
+<tr><td>They are = they're</td><td>Eles sao/estao</td></tr>
+</table>
+
+
+<div class="section-head"><span class="tag">Examples</span><h2>Examples Verb To Be – The Present</h2></div>
+<h3 class="pt">Exemplo Verbo Ser e Estar – O presente</h3>
+<table class="deck">
+<tr><th>Uses for verb to be</th><th>Question</th><th>Answer</th></tr>
+<tr><td>Age <button class="spk" onclick="document.getElementById('aud8').play()" aria-label="Play audio">🔊</button><br><span class="pt-cell">Anos</span></td><td>How old are you?<br><span class="pt-cell">Quantos anos você tem?</span></td><td>I'm 35 years old<br><span class="pt-cell">Eu tenho 35 anos de idade</span></td></tr>
+<tr><td>Place <button class="spk" onclick="document.getElementById('aud9').play()" aria-label="Play audio">🔊</button><br><span class="pt-cell">Lugar</span></td><td>Where are you from?<br><span class="pt-cell">De onde você é</span></td><td>I'm from the USA<br><span class="pt-cell">Sou dos Estados Unidos</span></td></tr>
+<tr><td>Nationality <button class="spk" onclick="document.getElementById('aud10').play()" aria-label="Play audio">🔊</button><br><span class="pt-cell">Nationalidade</span></td><td>What's your nationality?<br><span class="pt-cell">Qual é a sua nacionalidade?</span></td><td>I'm Brazilian<br><span class="pt-cell">Eu sou Brasileiro</span></td></tr>
+<tr><td>Health <button class="spk" onclick="document.getElementById('aud11').play()" aria-label="Play audio">🔊</button><br><span class="pt-cell">Saúde</span></td><td>How are you?<br><span class="pt-cell">Como você está?</span></td><td>I'm very well, thanks<br><span class="pt-cell">Estou muito bem, obrigado</span></td></tr>
+<tr><td>People <button class="spk" onclick="document.getElementById('aud12').play()" aria-label="Play audio">🔊</button><br><span class="pt-cell">Gente</span></td><td>What's she like?<br><span class="pt-cell">Como ela é?</span></td><td>She's really nice<br><span class="pt-cell">Ela é muito legal</span></td></tr>
+<tr><td>Prices <button class="spk" onclick="document.getElementById('aud13').play()" aria-label="Play audio">🔊</button><br><span class="pt-cell">preços</span></td><td>How much is it?<br><span class="pt-cell">Quanto isso custa?</span></td><td>It's 3.50 dollar<br><span class="pt-cell">é 3,50 dolares</span></td></tr>
+</table>
+
+
+<div class="section-head"><span class="tag">Grammar</span><h2>Verb To Be – The Past <button class="spk" onclick="document.getElementById('aud14').play()" aria-label="Play audio">🔊</button></h2></div>
+<h3 class="pt">Verbo Ser e Estar – O pretérito</h3>
+<table class="deck">
+<tr><th>To be</th><th>Ser/Estar</th></tr>
+<tr><td>I was</td><td>Eu estava</td></tr>
+<tr><td>You were</td><td>Você estava</td></tr>
+<tr><td>He/ She/ It was</td><td>Ele estava</td></tr>
+<tr><td>We were</td><td>Estávamos</td></tr>
+<tr><td>You were</td><td>Você estava</td></tr>
+<tr><td>They were</td><td>Eles estavam</td></tr>
+</table>
+
+
+<div class="section-head"><span class="tag">Examples</span><h2>Examples Verb To Be – Past <button class="spk" onclick="document.getElementById('aud15').play()" aria-label="Play audio">🔊</button></h2></div>
+<h3 class="pt">Exemplo Verbo Ser e Estar – O pretérito</h3>
+<table class="deck">
+<tr><td><button class="spk" onclick="document.getElementById('aud16').play()" aria-label="Play audio">🔊</button> I was at the beach yesterday</td><td class="pt-cell">eu estava na praia ontem</td></tr>
+<tr><td><button class="spk" onclick="document.getElementById('aud17').play()" aria-label="Play audio">🔊</button> You were hungry this morning</td><td class="pt-cell">Você estava com fome esta manhã</td></tr>
+<tr><td><button class="spk" onclick="document.getElementById('aud18').play()" aria-label="Play audio">🔊</button> I was late for work</td><td class="pt-cell">Eu estava atrasado para o trabalho</td></tr>
+<tr><td><button class="spk" onclick="document.getElementById('aud19').play()" aria-label="Play audio">🔊</button> They were at home</td><td class="pt-cell">Eles estavam em casa</td></tr>
+<tr><td><button class="spk" onclick="document.getElementById('aud20').play()" aria-label="Play audio">🔊</button> We were at the movies</td><td class="pt-cell">Estávamos no cinema</td></tr>
+<tr><td><button class="spk" onclick="document.getElementById('aud21').play()" aria-label="Play audio">🔊</button> He was at school</td><td class="pt-cell">Ele estava na escola</td></tr>
+<tr><td><button class="spk" onclick="document.getElementById('aud22').play()" aria-label="Play audio">🔊</button> It was a beautiful day</td><td class="pt-cell">Foi um belo dia</td></tr>
+</table>
+
+
+<div class="section-head"><span class="tag">Vocabulary</span><h2>What is your name/nickname/Last name?</h2></div>
+<h3 class="pt">Qual é seu nome/apellido/ sobrenome?</h3>
+<table class="deck">
+<tr><th></th><th>Translation</th><th>Pronunciation</th><th>Example</th></tr>
+<tr><td>My name is&hellip; I am/I'm&hellip;</td><td class="pt-cell">Meu nome é&hellip; Eu sou&hellip;</td><td><button class="spk" onclick="document.getElementById('aud23').play()" aria-label="Play audio">🔊</button></td><td>&ldquo;My name is Ester Iolanda&rdquo;<br>&ldquo;I'm Ester&rdquo;</td></tr>
+<tr><td>But you can call me&hellip; (Nickname)</td><td class="pt-cell">Mas voce pode me chamar de&hellip; (Apellido)</td><td><button class="spk" onclick="document.getElementById('aud24').play()" aria-label="Play audio">🔊</button> <span class="pt-cell">Bat iu ken cou mi</span></td><td>&ldquo;But you can call me Tete&rdquo;</td></tr>
+<tr><td>But they call me&hellip;</td><td class="pt-cell">Mas eles me chamam&hellip;</td><td><button class="spk" onclick="document.getElementById('aud25').play()" aria-label="Play audio">🔊</button></td><td>&ldquo;But they call me Tete&rdquo;</td></tr>
+<tr><td>But everyone calls me&hellip;</td><td class="pt-cell">Mas todos me chamam&hellip;</td><td><button class="spk" onclick="document.getElementById('aud26').play()" aria-label="Play audio">🔊</button> <span class="pt-cell">Bat everi uan cous mi</span></td><td>&ldquo;But everyone calls me Tete&rdquo;</td></tr>
+<tr><td style="color:#9a4a45;font-weight:700;">CALL &ne; COW</td><td style="color:#9a4a45;">Chamar &ne; Vaca</td><td></td><td></td></tr>
+</table>
+
+
+<div class="section-head"><span class="tag">Vocabulary</span><h2>How old are you? What is your age? <button class="spk" onclick="document.getElementById('aud27').play()" aria-label="Play audio">🔊</button></h2></div>
+<h3 class="pt">Quantos anos você esta? Qual é a sua idade?</h3>
+<table class="deck">
+<tr><th></th><th>Translation</th><th>Pronunciation</th><th>Example</th></tr>
+<tr><td>I'm&hellip; years old (= I AM&hellip; years old)</td><td class="pt-cell">Eu estou&hellip; anos</td><td><button class="spk" onclick="document.getElementById('aud28').play()" aria-label="Play audio">🔊</button></td><td>&ldquo;I'm 30 years old&rdquo; (= I AM 30 years old)<br>30 = Thirty</td></tr>
+<tr><td>Soon I will turn&hellip;</td><td class="pt-cell">Quando e estiver próximo o aniversario</td><td><button class="spk" onclick="document.getElementById('aud29').play()" aria-label="Play audio">🔊</button></td><td>&ldquo;Soon I will turn 31&rdquo;<br>31 = Thirty-one</td></tr>
+</table>
+
+
+<div class="section-head"><span class="tag">Vocabulary</span><h2>Where are you from? / What country are you from? <button class="spk" onclick="document.getElementById('aud30').play()" aria-label="Play audio">🔊</button></h2></div>
+<h3 class="pt">De onde você é? /Você é de que país?</h3>
+<table class="deck">
+<tr><th></th><th>Translation</th><th>Pronunciation</th><th>Example</th></tr>
+<tr><td>I'm from&hellip;</td><td class="pt-cell">Eu sou do&hellip;</td><td><button class="spk" onclick="document.getElementById('aud31').play()" aria-label="Play audio">🔊</button></td><td>&ldquo;I'm from Brazil&ldquo;</td></tr>
+<tr><td>And about you?</td><td class="pt-cell">- E sobre você?</td><td><button class="spk" onclick="document.getElementById('aud32').play()" aria-label="Play audio">🔊</button></td><td></td></tr>
+</table>
+
+
+<div class="section-head"><span class="tag">Vocabulary</span><h2>Where in&hellip; (country) are you from?</h2></div>
+<h3 class="pt">De onde você é no ... (país) ?</h3>
+<table class="deck">
+<tr><th></th><th>Translation</th><th>Pronunciation</th><th>Example</th></tr>
+<tr><td>I'm from&hellip;</td><td class="pt-cell">Eu sou do&hellip;</td><td><button class="spk" onclick="document.getElementById('aud33').play()" aria-label="Play audio">🔊</button></td><td>&ldquo;I'm from Brazil, Belo Horizonte City, Minas Gerais state&ldquo;</td></tr>
+</table>
+
+
+<div class="section-head"><span class="tag">Vocabulary</span><h2>What area are you from? <button class="spk" onclick="document.getElementById('aud34').play()" aria-label="Play audio">🔊</button></h2></div>
+<h3 class="pt">Qual area você é?</h3>
+<table class="deck">
+<tr><th></th><th>Translation</th><th>Pronunciation</th><th>Example</th></tr>
+<tr><td>I'm from&hellip;</td><td class="pt-cell">Eu sou do ...</td><td><button class="spk" onclick="document.getElementById('aud35').play()" aria-label="Play audio">🔊</button></td><td rowspan="3">&ldquo;I'm from the southeast of Brazil&ldquo;</td></tr>
+<tr><td>The north<br>The east<br>The south<br>The west</td><td class="pt-cell">O norte<br>O leste<br>O sul<br>O oeste</td><td><button class="spk" onclick="document.getElementById('aud36').play()" aria-label="Play audio">🔊</button></td></tr>
+<tr><td>The northeast<br>The nortwest<br>The southeast<br>The southwest</td><td class="pt-cell">O nordeste<br>O noroeste<br>O sudeste<br>O sudoeste</td><td><button class="spk" onclick="document.getElementById('aud37').play()" aria-label="Play audio">🔊</button></td></tr>
+</table>
+
+
+<div class="section-head"><span class="tag">Vocabulary</span><h2>Where do you live? <button class="spk" onclick="document.getElementById('aud38').play()" aria-label="Play audio">🔊</button></h2></div>
+<h3 class="pt">Onde você vive?</h3>
+<table class="deck">
+<tr><th></th><th>Translation</th><th>Pronunciation</th><th>Example</th></tr>
+<tr><td>I live in&hellip;</td><td class="pt-cell">Eu vivo/moro no ...</td><td><button class="spk" onclick="document.getElementById('aud39').play()" aria-label="Play audio">🔊</button></td><td>&ldquo;I live in Portugal&rdquo;</td></tr>
+<tr><td>I live abroad</td><td class="pt-cell">Eu moro no exterior</td><td><button class="spk" onclick="document.getElementById('aud40').play()" aria-label="Play audio">🔊</button></td><td></td></tr>
+</table>
+
+
+<div class="divider">&#10022; &#10022; &#10022;</div>
+<div class="section-head"><span class="tag">Practice</span><h2>Now it's your turn</h2></div>
+<h3 class="pt">Agora é sua vez</h3>
+<ul class="plain">
+  <li>Name &amp; nickname</li>
+  <li>Age</li>
+  <li>I am from&hellip; (Country, city, state / Area)</li>
+  <li>I live in&hellip;</li>
+</ul>
+<div class="qcard">
+  <h3>Example <button class="spk" onclick="document.getElementById('aud41').play()" aria-label="Play audio">🔊</button></h3>
+  <p>I am Ester, but you can call me Tete.<br>
+  I am 33 years old.<br>
+  I&acute;m from Brazil, Belo Horizonte City, Minas Gerais state.<br>
+  I&acute;m from the southeast of Brazil.<br>
+  I live abroad; I live in Belgium.</p>
+</div>
+
+
+<div class="section-head"><span class="tag">Exercise</span><h2>Now it's your turn</h2></div>
+<div class="callout">
+  I am _______ , but you can call me _______ .<br>
+  I am _____ years old.<br>
+  I&acute;m from __________(Country), __________(City), __________ (State).<br>
+  I&acute;m from the ___________ (area) of __________(Country).<br>
+  I live abroad; I live in _________.
+</div>
+<div class="section-head"><span class="tag">Exercise</span><h2>Introduce yourself</h2></div>
+<p>Introduce yourself to a friend, your parents, your family, your dog, your cat, &hellip;</p>
+
+
+<div class="divider">&#10022; &#10022; &#10022;</div>
+<p style="text-align:center; font-family:'Fraunces', serif; font-size:26px; font-weight:600; margin-top:60px;">Thank you &amp; see you in our next class</p>
+
+  <div style="text-align:center; margin-top:36px;">
+    <button class="btn-primary" style="background:var(--violet); color:#fff;" onclick="showTab('home')">← Voltar para o início</button>
+  </div>
+</div>
+
+<div style="display:none" aria-hidden="true">
+<audio id="aud1" preload="none"><source src="audio/aud1.mp3"></audio>
+<audio id="aud2" preload="none"><source src="audio/aud2.mp3"></audio>
+<audio id="aud3" preload="none"><source src="audio/aud3.mp3"></audio>
+<audio id="aud4" preload="none"><source src="audio/aud4.mp3"></audio>
+<audio id="aud5" preload="none"><source src="audio/aud5.mp3"></audio>
+<audio id="aud6" preload="none"><source src="audio/aud6.mp3"></audio>
+<audio id="aud7" preload="none"><source src="audio/aud7.mp3"></audio>
+<audio id="aud8" preload="none"><source src="audio/aud8.mp3"></audio>
+<audio id="aud9" preload="none"><source src="audio/aud9.mp3"></audio>
+<audio id="aud10" preload="none"><source src="audio/aud10.mp3"></audio>
+<audio id="aud11" preload="none"><source src="audio/aud11.mp3"></audio>
+<audio id="aud12" preload="none"><source src="audio/aud12.mp3"></audio>
+<audio id="aud13" preload="none"><source src="audio/aud13.mp3"></audio>
+<audio id="aud14" preload="none"><source src="audio/aud14.mp3"></audio>
+<audio id="aud15" preload="none"><source src="audio/aud15.mp3"></audio>
+<audio id="aud16" preload="none"><source src="audio/aud16.mp3"></audio>
+<audio id="aud17" preload="none"><source src="audio/aud17.mp3"></audio>
+<audio id="aud18" preload="none"><source src="audio/aud18.mp3"></audio>
+<audio id="aud19" preload="none"><source src="audio/aud19.mp3"></audio>
+<audio id="aud20" preload="none"><source src="audio/aud20.mp3"></audio>
+<audio id="aud21" preload="none"><source src="audio/aud21.mp3"></audio>
+<audio id="aud22" preload="none"><source src="audio/aud22.mp3"></audio>
+<audio id="aud23" preload="none"><source src="audio/aud23.mp3"></audio>
+<audio id="aud24" preload="none"><source src="audio/aud24.mp3"></audio>
+<audio id="aud25" preload="none"><source src="audio/aud25.mp3"></audio>
+<audio id="aud26" preload="none"><source src="audio/aud26.mp3"></audio>
+<audio id="aud27" preload="none"><source src="audio/aud27.mp3"></audio>
+<audio id="aud28" preload="none"><source src="audio/aud28.mp3"></audio>
+<audio id="aud29" preload="none"><source src="audio/aud29.mp3"></audio>
+<audio id="aud30" preload="none"><source src="audio/aud30.mp3"></audio>
+<audio id="aud31" preload="none"><source src="audio/aud31.mp3"></audio>
+<audio id="aud32" preload="none"><source src="audio/aud32.mp3"></audio>
+<audio id="aud33" preload="none"><source src="audio/aud33.mp3"></audio>
+<audio id="aud34" preload="none"><source src="audio/aud34.mp3"></audio>
+<audio id="aud35" preload="none"><source src="audio/aud35.mp3"></audio>
+<audio id="aud36" preload="none"><source src="audio/aud36.mp3"></audio>
+<audio id="aud37" preload="none"><source src="audio/aud37.mp3"></audio>
+<audio id="aud38" preload="none"><source src="audio/aud38.mp3"></audio>
+<audio id="aud39" preload="none"><source src="audio/aud39.mp3"></audio>
+<audio id="aud40" preload="none"><source src="audio/aud40.mp3"></audio>
+<audio id="aud41" preload="none"><source src="audio/aud41.mp3"></audio>
+</div>
+</div>
+
+<!-- ============ METODOLOGIA TAB ============ -->
+<div id="metodologia" class="tab-panel">
+  <div class="m1-hero">
+    <div class="eyebrow mono" style="font-size:12px;letter-spacing:0.2em;opacity:0.85;margin-bottom:12px;">Inglês Para Viagens</div>
+    <h1>Metodologia</h1>
+    <p>Como aprender qualquer idioma — na perspectiva de uma brasileira aprendendo holandês morando na Bélgica.</p>
+    <div class="badge mono">Método pessoal</div>
+  </div>
+
+  <div class="wrap-narrow" style="padding:44px 20px;">
+
+    <div class="section-head"><span class="tag mono">Bagagem</span><h2>Antes de embarcar</h2></div>
+    <p class="section-intro">Onze princípios que guiam a forma como eu ensino e como eu mesma aprendo idiomas. Não é uma lista de regras de gramática — é uma forma de pensar sobre o processo.</p>
+
+    <div class="ticket">
+      <div class="stub"><div class="num">01</div><div class="lbl mono">Mente</div></div>
+      <div class="perf"></div>
+      <div class="body">
+        <h3>Tenha a mentalidade de um aprendiz</h3>
+        <ul><li>Você realmente precisa querer aprender → você precisa de persistência.</li></ul>
+      </div>
+    </div>
+
+    <div class="ticket">
+      <div class="stub"><div class="num">02</div><div class="lbl mono">Motivo</div></div>
+      <div class="perf"></div>
+      <div class="body">
+        <h3>Estímulo é a chave</h3>
+        <ul>
+          <li>Isso te mantém motivado.</li>
+          <li>Motive-se, encoraje-se.</li>
+          <li>Encontre alguém para te estimular.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ticket">
+      <div class="stub"><div class="num">03</div><div class="lbl mono">Passos</div></div>
+      <div class="perf"></div>
+      <div class="body">
+        <h3>Cada degrau da escada é um passo mais perto do seu objetivo</h3>
+        <ul><li>Não se deixe paralisar pelo caminho longo à sua frente — divida sua jornada em pequenos passos.</li></ul>
+      </div>
+    </div>
+
+    <div class="ticket">
+      <div class="stub"><div class="num">04</div><div class="lbl mono">Erros</div></div>
+      <div class="perf"></div>
+      <div class="body">
+        <h3>Não tenha medo de errar</h3>
+        <ul><li>Ter medo de errar vai desacelerar muito o seu aprendizado. Só melhoramos praticando.</li></ul>
+      </div>
+    </div>
+
+    <div class="ticket">
+      <div class="stub"><div class="num">05</div><div class="lbl mono">Frases</div></div>
+      <div class="perf"></div>
+      <div class="body">
+        <h3>Não aprenda só palavras soltas — aprenda frases úteis no dia a dia</h3>
+        <p class="pt">Exemplos:</p>
+        <ul>
+          <li>"Hoje eu tive um dia cheio."</li>
+          <li>"Por favor, onde fica o banheiro?"</li>
+          <li>"Tenho uma pergunta, você pode me ajudar?"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ticket">
+      <div class="stub"><div class="num">06</div><div class="lbl mono">Educação</div></div>
+      <div class="perf"></div>
+      <div class="body">
+        <h3>Aprenda as palavras gentis do idioma</h3>
+        <p class="pt">Exemplos:</p>
+        <ul><li>por favor · obrigado(a) · de nada · agradeço · com licença · desculpa · peço desculpas</li></ul>
+      </div>
+    </div>
+
+    <div class="ticket">
+      <div class="stub"><div class="num">07</div><div class="lbl mono">Meta</div></div>
+      <div class="perf"></div>
+      <div class="body">
+        <h3>Defina uma meta</h3>
+        <ul>
+          <li>"Vou aprender essas frases em 1 semana."</li>
+          <li>"Vou ser fluente em 3 anos."</li>
+          <li>"Vou atingir o nível básico do idioma em 1 ano."</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ticket">
+      <div class="stub"><div class="num">08</div><div class="lbl mono">Rotina</div></div>
+      <div class="perf"></div>
+      <div class="body">
+        <h3>Faça do idioma parte da sua vida diária</h3>
+        <p class="pt">Encaixe o idioma nos hábitos que você já tem:</p>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="scene"><div class="where">🎵 Música</div><p class="prompt">Se você gosta de ouvir música, ouça músicas no idioma que quer aprender.</p></div>
+      <div class="scene"><div class="where">🍳 Cozinha</div><p class="prompt">Se você gosta de cozinhar, use receitas no idioma que quer aprender.</p></div>
+      <div class="scene"><div class="where">🔎 Pesquisa</div><p class="prompt">Se quiser pesquisar sobre um tema específico, procure a informação no idioma que quer aprender.</p></div>
+      <div class="scene"><div class="where">🎬 Séries e filmes</div><p class="prompt">Se você gosta de assistir séries ou filmes, coloque as legendas no idioma que quer aprender.</p></div>
+      <div class="scene"><div class="where">🎮 Jogos online</div><p class="prompt">Se você gosta de jogar online, jogue em servidores onde usam o idioma que quer aprender.</p></div>
+    </div>
+
+    <div class="ticket" style="margin-top:16px;">
+      <div class="stub"><div class="num">09</div><div class="lbl mono">Repetir</div></div>
+      <div class="perf"></div>
+      <div class="body">
+        <h3>Repita, repita, repita</h3>
+        <ul><li>Repetição é importante — repita as expressões e frases o máximo possível ao longo do dia. Isso condiciona o seu cérebro a essas frases. A cada dia, seu vocabulário fica mais forte.</li></ul>
+      </div>
+    </div>
+
+    <div class="ticket">
+      <div class="stub"><div class="num">10</div><div class="lbl mono">Ambiente</div></div>
+      <div class="perf"></div>
+      <div class="body">
+        <h3>Deixe as frases que está aprendendo à vista</h3>
+        <ul><li>Pendure as frases em lugares que você olha todos os dias — isso estimula o cérebro a memorizá-las com mais facilidade.</li></ul>
+      </div>
+    </div>
+
+    <div class="ticket">
+      <div class="stub"><div class="num">11</div><div class="lbl mono">Identidade</div></div>
+      <div class="perf"></div>
+      <div class="body">
+        <h3>Crie uma conta no Instagram só para o idioma</h3>
+        <ul><li>Siga pessoas que ensinam o idioma que você quer aprender e explore temas do seu interesse nesse idioma. Essa conta vai representar a versão sua que fala o idioma que está aprendendo.</li></ul>
+      </div>
+    </div>
+
+    <div class="divider">✦ ✦ ✦</div>
+
+    <div class="section-head"><span class="tag mono">Lembrete</span><h2>No fim das contas</h2></div>
+    <div class="ticket" style="display:block; padding:4px 22px 8px;">
+      <div class="tip">
+        <div class="mark">"</div>
+        <div class="txt"><strong>Não existe atalho, só constância.</strong><span>Cada um desses onze pontos funciona junto com os outros — é a soma deles, dia após dia, que constrói a fluência.</span></div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:36px;">
+      <button class="btn-primary" style="background:var(--violet); color:#fff;" onclick="showTab('home')">← Voltar para o início</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ SOBRE TAB ============ -->
+<div id="sobre" class="tab-panel">
+  <div class="simple-hero"><h1>Sobre o Inglês Para Viagens</h1></div>
+  <div class="wrap-narrow" style="padding:44px 20px;">
+    <p class="section-intro" style="font-size:16px;">O Inglês Para Viagens nasceu de uma ideia simples: o inglês não deveria ser um privilégio de quem já teve acesso a boas escolas ou intercâmbios. Ele deveria ser uma ponte — para quem quer viajar, para quem quer uma vaga melhor, para quem só quer se sentir seguro numa conversa em outro idioma.</p>
+    <p class="section-intro" style="font-size:16px;">Esta plataforma é feita para brasileiros com nível iniciante ou intermediário que já tentaram aprender inglês antes, mas travaram por medo de errar. Aqui, o foco não é decorar regras — é ganhar confiança para abrir a boca e falar, em qualquer lugar do mundo.</p>
+    <p class="section-intro" style="font-size:16px;">Módulo por módulo, aula por aula, o objetivo é sempre o mesmo: fazer o inglês parar de ser uma barreira, e virar a sua chave para liberdade, confiança e novas oportunidades — pessoais e profissionais.</p>
+  </div>
+</div>
+
+<!-- ============ CONTATO TAB ============ -->
+<div id="contato" class="tab-panel">
+  <div class="simple-hero"><h1>Fale conosco</h1></div>
+  <div class="contact-card">
+    <p style="margin:0 0 6px; font-weight:700;">Tem alguma dúvida, sugestão ou quer saber quando o próximo módulo chega?</p>
+    <p style="margin:0; color:#6f6b7c; font-size:14.5px;">Mande uma mensagem — toda dúvida é bem-vinda, mesmo em português.</p>
+    <a class="mailbtn" href="mailto:contato@inglesparaviagens.com">Enviar e-mail</a>
+  </div>
+</div>
+
+<footer>
+  <div class="f-brand">Inglês Para Viagens</div>
+  <div class="f-tag">O inglês como chave da sua liberdade.</div>
+  <div class="f-links">
+    <a href="#" onclick="showTab('home');return false;">Início</a>
+    <a href="#" onclick="showTab('modulo1');return false;">Módulo 1 · Aula 1</a>
+    <a href="#" onclick="showTab('metodologia');return false;">Metodologia</a>
+    <a href="#" onclick="showTab('sobre');return false;">Sobre</a>
+    <a href="#" onclick="showTab('contato');return false;">Contato</a>
+  </div>
+  <div class="copy mono">© Inglês Para Viagens</div>
+</footer>
+
+</div>
+<!-- closes #app-content -->
+
+<script src="js/script.js"></script>
+
+</body>
+</html>
