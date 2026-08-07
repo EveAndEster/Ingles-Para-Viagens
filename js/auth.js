@@ -8,6 +8,60 @@ const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_7JmRfnopS6BxPCbtHNh-CA_vaj0Z7ot
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
+// A random code unique to *this* browser tab/device, generated fresh each login.
+// Saved to localStorage too, so a page refresh doesn't wipe it from memory.
+let mySessionToken = localStorage.getItem('ipv_session_token');
+let sessionCheckInterval = null;
+
+function generateToken() {
+  return crypto.randomUUID();
+}
+
+// ---------- Single-session enforcement ----------
+
+// Call this ONLY at the moment of a real login — it invalidates any other device.
+async function claimSession(userId) {
+  mySessionToken = generateToken();
+  localStorage.setItem('ipv_session_token', mySessionToken);
+  await supabaseClient
+    .from('active_sessions')
+    .upsert({ user_id: userId, session_token: mySessionToken, updated_at: new Date().toISOString() });
+}
+
+async function verifySession(userId) {
+  const { data, error } = await supabaseClient
+    .from('active_sessions')
+    .select('session_token')
+    .eq('user_id', userId)
+    .single();
+
+  if (error || !data) return true; // don't force logout on a transient network hiccup
+
+  if (data.session_token !== mySessionToken) {
+    // Someone else logged into this account elsewhere — this device loses.
+    stopSessionCheck();
+    localStorage.removeItem('ipv_session_token');
+    await supabaseClient.auth.signOut();
+    showGate();
+    showSignIn();
+    setAuthMessage('Sua conta foi acessada em outro dispositivo. Você foi desconectado(a).', true);
+    return false;
+  }
+  return true;
+}
+
+function startSessionCheck(userId) {
+  stopSessionCheck();
+  sessionCheckInterval = setInterval(() => verifySession(userId), 15000); // every 15s
+}
+
+function stopSessionCheck() {
+  if (sessionCheckInterval) {
+    clearInterval(sessionCheckInterval);
+    sessionCheckInterval = null;
+  }
+}
+
 // ---------- UI helpers ----------
 
 function showSignUp() {
@@ -63,7 +117,10 @@ async function handleSignUp() {
 
   // If email confirmation is required, Supabase won't return a session yet.
   if (data.session) {
+    await claimSession(data.user.id);
+    startSessionCheck(data.user.id);
     setAuthMessage('Conta criada!', false);
+    showApp();
   } else {
     setAuthMessage('Conta criada! Verifique seu e-mail para confirmar antes de entrar.', false);
   }
@@ -86,11 +143,16 @@ async function handleSignIn() {
     return;
   }
 
+  await claimSession(data.user.id);
+  startSessionCheck(data.user.id);
+
   setAuthMessage('', false);
   showApp();
 }
 
 async function handleSignOut() {
+  stopSessionCheck();
+  localStorage.removeItem('ipv_session_token');
   await supabaseClient.auth.signOut();
   showGate();
   showSignIn();
@@ -100,7 +162,20 @@ async function handleSignOut() {
 
 async function checkExistingSession() {
   const { data } = await supabaseClient.auth.getSession();
+
   if (data.session) {
+    const userId = data.session.user.id;
+
+    if (mySessionToken) {
+      // We have a saved token from a previous login on this device — just verify it's still valid.
+      const stillValid = await verifySession(userId);
+      if (!stillValid) return; // already kicked out and shown the login screen — stop here
+    } else {
+      // No local token (e.g. cleared storage) but Supabase still thinks we're logged in.
+      // Treat it as a fresh login for this device.
+      await claimSession(userId);
+    }
+    startSessionCheck(userId);
     showApp();
   } else {
     showGate();
